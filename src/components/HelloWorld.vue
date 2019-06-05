@@ -1,58 +1,126 @@
+/* eslint-disable */
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+<div>
+  <h1>Image Flip with Text</h1>
+  <h3>Hover over the image below:</h3>
+  <button @click="checkGenerated()">Check again</button>
+  <table>
+    <thead></thead>
+    <tbody>
+      <tr v-for="(asd,index) in array" :key="index">
+        <td v-for="(item,index) in asd" :key="index">
+          <div class="flip-box">
+            <div class="flip-box-inner">
+              <div class="flip-box-front">
+                <img src="img_paris.jpg" alt="Paris" style="width:100px;height:100px">
+              </div>
+              <div class="flip-box-back">
+                <img :src="item" alt="Paris" style="width:100px;height:100px">
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table> 
+</div>
 </template>
-
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  data() {
+    return {
+      row:4,
+      coln:4,
+      number : [],
+      temp : ['http://www.everlastingcelebrations.com/wp-content/uploads/2018/09/Top-Ganesh-Chaturthi-Messages-Images-Photos.jpg','https://imgd.aeplcdn.com/1280x720/bw/models/yamaha-r15.jpg?20191001112540&q=80',
+      'https://media.istockphoto.com/photos/tomato-isolated-on-white-background-picture-id466175630?k=6&m=466175630&s=612x612&w=0&h=fu_mQBjGJZIliOWwCR0Vf2myRvKWyQDsymxEIi8tZ38=',
+      'https://images.all-free-download.com/images/graphiclarge/daisy_pollen_flower_220533.jpg','https://image.shutterstock.com/image-vector/smiley-vector-happy-face-260nw-408014413.jpg','https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+      'https://image.shutterstock.com/image-vector/cartoon-heart-vector-260nw-237494677.jpg',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn5MXPV60GzTqGjish0u84lTuPEhTkTnrSV2ML3E359n7_0RkQ_g']
+    }
+  },
+  methods: {
+    createArray() { /* eslint-disable */
+      let itemCount = (this.row * this.coln)/2; //8
+      let array = [[]];
+      let generated = [], obj = {};
+      for(let i=0;i< this.row;i++) {
+        array.push([]);
+        for(let j=0;j< this.coln;j++) {
+          let item = this.number[Math.floor(Math.random()*this.number.length)];
+          if(obj[item] <= 2) {
+            obj[item]++;
+          } else {
+            obj[item] = 1;
+          }
+          if(obj[item] == 2) {
+            let index = this.number.indexOf(item);
+            this.number.splice(index, 1);
+          }
+          if(obj[item] <= 2) {
+            array[i][j] = this.temp[item]; 
+            generated.push(item);
+          }
+        }
+      }
+      console.log('obj: ', obj);
+      console.log('generated: ', generated);      
+      console.log('array: ', array);
+      this.array = array;
+    },
+    checkGenerated() {
+      for(let i =0;i < this.temp.length; i++) {
+        this.number.push(i);
+      }
+      this.createArray();
+    }
+  },
+  created() {
+    this.checkGenerated();
   }
 }
 </script>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+.flip-box {
+  background-color: transparent;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #f1f1f1;
+  perspective: 500px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.flip-box-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.flip-box .flip-box-inner {
+  transform: rotateY(180deg);
 }
-a {
-  color: #42b983;
+
+.flip-box-front, .flip-box-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.flip-box-front {
+  background-color: #bbb;
+  color: black;
+}
+
+.flip-box-back {
+  background-color: #555;
+  color: white;
+  transform: rotateY(180deg);
 }
 </style>
