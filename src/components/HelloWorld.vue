@@ -1,14 +1,12 @@
 /* eslint-disable */
 <template>
 <div>
-  <h1>Image Flip with Text</h1>
-  <h3>Hover over the image below:</h3>
-  <button @click="checkGenerated()">Check again</button>
+  <h1>Play with image flip</h1>
   <table>
     <thead></thead>
     <tbody>
-      <tr v-for="(asd,index) in array" :key="index">
-        <td v-for="(item,index) in asd" :key="index">
+      <tr v-for="(asd,n) in array" :key="n">
+        <td v-for="(item,index) in asd" :key="index" @click="openImage($event, item)" :id="'img'+ n+index">
           <div class="flip-box">
             <div class="flip-box-inner">
               <div class="flip-box-front">
@@ -31,6 +29,10 @@ export default {
     return {
       row:4,
       coln:4,
+      click : 0,
+      clicked : [],
+      clickedImages : [],
+      enableClick : true,
       number : [],
       temp : ['http://www.everlastingcelebrations.com/wp-content/uploads/2018/09/Top-Ganesh-Chaturthi-Messages-Images-Photos.jpg','https://imgd.aeplcdn.com/1280x720/bw/models/yamaha-r15.jpg?20191001112540&q=80',
       'https://media.istockphoto.com/photos/tomato-isolated-on-white-background-picture-id466175630?k=6&m=466175630&s=612x612&w=0&h=fu_mQBjGJZIliOWwCR0Vf2myRvKWyQDsymxEIi8tZ38=',
@@ -40,7 +42,8 @@ export default {
     }
   },
   methods: {
-    createArray() { /* eslint-disable */
+    /* eslint-disable */
+    createArray() {
       let itemCount = (this.row * this.coln)/2; //8
       let array = [[]];
       let generated = [], obj = {};
@@ -63,9 +66,6 @@ export default {
           }
         }
       }
-      console.log('obj: ', obj);
-      console.log('generated: ', generated);      
-      console.log('array: ', array);
       this.array = array;
     },
     checkGenerated() {
@@ -73,6 +73,40 @@ export default {
         this.number.push(i);
       }
       this.createArray();
+    },
+    openImage(e, image) {
+      if(this.enableClick) {
+        let self = this;
+        e.preventDefault();
+        this.click++;
+        if(this.click < 3) {
+          this.clicked.push(e);
+          this.clickedImages.push(image);
+          e.path[2].style.transform = 'rotateY(180deg)';
+          e.path[2].style.transformStyle = 'preserve-3d';
+        }
+        if(this.click >= 2) {
+          this.enableClick = false;
+          this.click = 0;
+          if(this.clickedImages[0] == this.clickedImages[1]) {
+            setTimeout(function() {
+              self.clicked.forEach(id => {
+                id.path[2].innerHTML = '';
+              });
+              self.enableClick = true;
+            }, 500);
+          }
+          setTimeout(function() {
+            self.clicked.forEach(item => {
+              item.path[2].style.transform = 'none';
+              item.path[2].style.transformStyle = 'none';
+              self.clicked = [];
+              self.clickedImages = [];
+            });
+            self.enableClick = true;
+          }, 700);
+        }
+      }
     }
   },
   created() {
@@ -102,7 +136,7 @@ body {
   transform-style: preserve-3d;
 }
 
-.flip-box .flip-box-inner {
+.flip-box:active .flip-box-inner {
   transform: rotateY(180deg);
 }
 
